@@ -67,16 +67,25 @@ def import_to_photoprism(container):
 
 
 def main():
-    source_directory = "/path/to/iCloud/"
-    dest_directory = "/path/to/PhotoPrism/PhotoImport"
+    # Edit the username
+    user = "user"
+	# Edit these paths
+    storage_directory = f"/mnt/data/{user}/Pictures"
+    source_directory = f"/mnt/data/{user}/.icloud"
+    dest_directory = f"/mnt/.ix-apps/app_mounts/photoprism-{user}/import"
+
     move_files(source_directory, dest_directory)
-    print('finished moving all files')
+    
 
-
-    photoprism_container = 'PhotoPrism'
+    photoprism_container = f"ix-photoprism-{user}-photoprism-1"
     import_to_photoprism(photoprism_container)
     print('finished importing files to Photoprism')
-
+    files = os.popen(f"find {storage_directory} ! -user \"{user}\" -printf \"%p\n\"").read().splitlines()
+    print('finished moving all files')
+    for file in files:
+        os.system(f"chown {user}:{user} {file}")
+    print(f"change the owner of files to {user}")
+ 
 
 if __name__ == '__main__':
     main()
